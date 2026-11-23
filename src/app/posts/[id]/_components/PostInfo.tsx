@@ -5,6 +5,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import type { usePost } from "@/hooks/usePost";
 import { toErrorMessage } from "@/lib/backend/client";
 import { formatDate } from "@/lib/format";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -58,6 +59,12 @@ export function PostInfo({
       </div>
 
       <div className="mt-10 flex justify-end gap-2">
+        <Link
+          href={`/posts/${post.id}/edit`}
+          className={buttonClass("grey", "md")}
+        >
+          수정
+        </Link>
         <button
           type="button"
           className={buttonClass("danger", "md")}

@@ -5,7 +5,7 @@ import {
   toErrorMessage,
   type RsData,
 } from "@/lib/backend/client";
-import type { PostDto } from "@/types/post";
+import type { PostDto, PostWriteReqBody } from "@/types/post";
 import { useEffect, useState } from "react";
 
 // 글 하나를 불러오고 다루는 훅. 화면(JSX)과 데이터 로직을 나눠 페이지 컴포넌트를 가볍게 유지한다.
@@ -24,5 +24,11 @@ export function usePost(id: number) {
   const deletePost = () =>
     apiFetch<RsData>(`/api/v1/posts/${id}`, { method: "DELETE" });
 
-  return { id, post, error, deletePost };
+  const modifyPost = (body: PostWriteReqBody) =>
+    apiFetch<RsData>(`/api/v1/posts/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(body),
+    });
+
+  return { id, post, error, deletePost, modifyPost };
 }
