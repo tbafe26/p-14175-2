@@ -2,8 +2,9 @@
 
 import type { usePostComments } from "@/hooks/usePostComments";
 import { PostCommentList } from "./PostCommentList";
+import { PostCommentWrite } from "./PostCommentWrite";
 
-// 글 상세 하단의 댓글 영역. 댓글 개수 제목과 목록을 묶는다.
+// 글 상세 하단의 댓글 영역. 댓글 개수 제목, 작성 폼, 목록을 묶는다.
 export function PostCommentSection({
   postCommentsState,
 }: {
@@ -21,6 +22,10 @@ export function PostCommentSection({
       </h2>
 
       <div className="mt-5">
+        <PostCommentWrite postCommentsState={postCommentsState} />
+      </div>
+
+      <div className="mt-6">
         <PostCommentList postCommentsState={postCommentsState} />
       </div>
     </section>

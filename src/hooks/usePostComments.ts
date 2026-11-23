@@ -5,7 +5,7 @@ import {
   toErrorMessage,
   type RsData,
 } from "@/lib/backend/client";
-import type { PostCommentDto } from "@/types/post";
+import type { PostCommentDto, PostCommentWriteReqBody } from "@/types/post";
 import { useEffect, useState } from "react";
 
 // 한 글에 달린 댓글 목록을 불러오고 다루는 훅
@@ -35,5 +35,16 @@ export function usePostComments(postId: number) {
       return rsData;
     });
 
-  return { postId, postComments, error, deleteComment };
+  // 작성 요청이 성공하면 응답으로 받은 새 댓글을 목록 끝에 붙인다.
+  const writeComment = (content: string) =>
+    apiFetch<RsData<PostCommentDto>>(`/api/v1/posts/${postId}/comments`, {
+      method: "POST",
+      body: JSON.stringify({ content } satisfies PostCommentWriteReqBody),
+    }).then((rsData) => {
+      setPostComments((prev) => (prev == null ? prev : [...prev, rsData.data]));
+
+      return rsData;
+    });
+
+  return { postId, postComments, error, deleteComment, writeComment };
 }
