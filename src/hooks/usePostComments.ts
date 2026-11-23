@@ -1,6 +1,10 @@
 "use client";
 
-import { apiFetch, toErrorMessage } from "@/lib/backend/client";
+import {
+  apiFetch,
+  toErrorMessage,
+  type RsData,
+} from "@/lib/backend/client";
 import type { PostCommentDto } from "@/types/post";
 import { useEffect, useState } from "react";
 
@@ -18,5 +22,18 @@ export function usePostComments(postId: number) {
       .catch((e) => setError(toErrorMessage(e)));
   }, [postId]);
 
-  return { postId, postComments, error };
+  // 삭제 요청이 성공하면 화면의 목록에서도 바로 지운다(새로고침 없이 반영).
+  const deleteComment = (commentId: number) =>
+    apiFetch<RsData>(`/api/v1/posts/${postId}/comments/${commentId}`, {
+      method: "DELETE",
+    }).then((rsData) => {
+      // 함수형 업데이트: 요청이 끝난 시점의 최신 목록을 기준으로 지운다.
+      setPostComments(
+        (prev) => prev?.filter((comment) => comment.id !== commentId) ?? prev,
+      );
+
+      return rsData;
+    });
+
+  return { postId, postComments, error, deleteComment };
 }
