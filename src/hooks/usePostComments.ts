@@ -5,7 +5,11 @@ import {
   toErrorMessage,
   type RsData,
 } from "@/lib/backend/client";
-import type { PostCommentDto, PostCommentWriteReqBody } from "@/types/post";
+import type {
+  PostCommentDto,
+  PostCommentModifyReqBody,
+  PostCommentWriteReqBody,
+} from "@/types/post";
 import { useEffect, useState } from "react";
 
 // 한 글에 달린 댓글 목록을 불러오고 다루는 훅
@@ -46,5 +50,36 @@ export function usePostComments(postId: number) {
       return rsData;
     });
 
-  return { postId, postComments, error, deleteComment, writeComment };
+  // 수정 요청이 성공하면 화면의 해당 댓글도 바꾼다.
+  // 수정 API 는 data 없이 RsData<Void> 를 돌려주므로, 단건조회로 바뀐 수정 시각까지 받아 온다.
+  const modifyComment = async (commentId: number, content: string) => {
+    const path = `/api/v1/posts/${postId}/comments/${commentId}`;
+
+    const rsData = await apiFetch<RsData>(path, {
+      method: "PUT",
+      body: JSON.stringify({ content } satisfies PostCommentModifyReqBody),
+    });
+
+    // 단건조회가 실패해도 수정 자체는 성공했으므로, 그때는 내용만 바꿔 둔다.
+    const modified = await apiFetch<PostCommentDto>(path).catch(() => null);
+
+    setPostComments((prev) =>
+      prev?.map((comment) =>
+        comment.id === commentId
+          ? (modified ?? { ...comment, content })
+          : comment,
+      ) ?? prev,
+    );
+
+    return rsData;
+  };
+
+  return {
+    postId,
+    postComments,
+    error,
+    deleteComment,
+    writeComment,
+    modifyComment,
+  };
 }

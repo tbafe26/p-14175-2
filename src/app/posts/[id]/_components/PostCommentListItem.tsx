@@ -16,7 +16,8 @@ export function PostCommentListItem({
   comment: PostCommentDto;
   postCommentsState: ReturnType<typeof usePostComments>;
 }) {
-  const { deleteComment: _deleteComment } = postCommentsState;
+  const { deleteComment: _deleteComment, modifyComment: _modifyComment } =
+    postCommentsState;
   const [deleting, setDeleting] = useState(false);
   // true 이면 댓글 내용 대신 수정 폼을 보여 준다. 항목마다 따로 가지는 상태다.
   const [modifyMode, setModifyMode] = useState(false);
@@ -37,8 +38,14 @@ export function PostCommentListItem({
       });
   };
 
-  // 수정 API 연결은 다음 단계에서 한다. 지금은 검사를 통과해도 아무 요청도 보내지 않는다.
-  const modifyComment = () => Promise.resolve();
+  // 성공하면 메시지를 보여 주고 수정 모드를 닫는다. 실패하면 폼이 오류를 표시하고 수정 모드를 유지한다.
+  const modifyComment = (content: string) =>
+    _modifyComment(comment.id, content).then((rsData) => {
+      alert(rsData.msg);
+      setModifyMode(false);
+    });
+
+  const modified = comment.modifyDate !== comment.createDate;
 
   return (
     <li className="flex items-start gap-3 rounded-2xl bg-grey-50 px-5 py-4">
@@ -46,6 +53,9 @@ export function PostCommentListItem({
         <div className="flex items-center gap-2 text-sm text-grey-500">
           <span className="font-semibold text-grey-700">#{comment.id}</span>
           <span>{formatDate(comment.createDate)}</span>
+          {modified && (
+            <span title={`수정 ${formatDate(comment.modifyDate)}`}>· 수정됨</span>
+          )}
         </div>
 
         {!modifyMode && (

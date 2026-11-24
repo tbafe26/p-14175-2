@@ -17,3 +17,4 @@ export type PostCommentDto = {
 // 작성/수정 요청 본문
 export type PostWriteReqBody = Pick<PostDto, "title" | "content">;
 export type PostCommentWriteReqBody = Pick<PostCommentDto, "content">;
+export type PostCommentModifyReqBody = Pick<PostCommentDto, "content">;
