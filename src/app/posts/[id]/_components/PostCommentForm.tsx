@@ -75,6 +75,11 @@ export function PostCommentForm({
           defaultValue={defaultValue}
           aria-invalid={error != null}
           autoFocus={autoFocus}
+          // 기존 내용이 있는 채로 포커스되면 커서를 맨 끝에 둬 바로 이어서 고칠 수 있게 한다.
+          onFocus={(e) => {
+            const end = e.currentTarget.value.length;
+            e.currentTarget.setSelectionRange(end, end);
+          }}
           onChange={(e) => setLength(e.currentTarget.value.length)}
           onKeyDown={(e) => {
             if (e.key === "Escape" && onCancel) onCancel();
