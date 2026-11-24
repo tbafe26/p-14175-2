@@ -1,10 +1,10 @@
 # p-14175-2 — Next.js 게시판 프론트엔드
 
-스프링부트 REST API(글/댓글)를 호출하는 Next.js 프론트엔드를 처음부터 만들어 가는 학습용 저장소입니다. 홈 → 글 CRUD → 댓글 순서로 기능 단위 커밋을 쌓았습니다.
+스프링부트 REST API(글/댓글)를 호출하는 Next.js 프론트엔드를 처음부터 만들어 가는 학습용 저장소입니다. 홈 → 글 CRUD → 댓글 → 리팩토링·댓글 수정 순서로 기능 단위 커밋을 쌓았습니다.
 
 - 모든 커밋에는 `001`, `002` … 처럼 **순번 태그**가 붙어 있습니다.
-- 커밋 메세지는 **Conventional Commits** 형식(`feat:`, `style:`, `chore:`, `docs:`)이며, 본문에 **무엇을 / 왜 / 확인** 이 자세히 적혀 있습니다.
-- 단계별 상세 기록은 파트별 문서([1부](docs/part1-setup.md) · [2부](docs/part2-posts.md) · [3부](docs/part3-comments.md))에 있습니다.
+- 커밋 메세지는 **Conventional Commits** 형식(`feat:`, `refactor:`, `style:`, `chore:`, `docs:`)이며, 본문에 **무엇을 / 왜 / 확인** 이 자세히 적혀 있습니다.
+- 단계별 상세 기록은 파트별 문서([1부](docs/part1-setup.md) · [2부](docs/part2-posts.md) · [3부](docs/part3-comments.md) · [4부](docs/part4-refactor-comment-modify.md))에 있습니다.
 
 ![next.js](https://img.shields.io/badge/Next.js-16.4.6-black) ![react](https://img.shields.io/badge/React-19.3-61DAFB) ![typescript](https://img.shields.io/badge/TypeScript-5.9-3178C6) ![tailwind](https://img.shields.io/badge/Tailwind%20CSS-4.3-06B6D4) ![build](https://img.shields.io/badge/build-passing-brightgreen)
 
@@ -27,6 +27,8 @@
 | 2부 | 006 ~ 010 | **글 다건조회 → 단건조회 → 삭제 → 작성 → 수정** | `useEffect` fetch, 초기값 `null`, `useParams` + `loading.tsx`, 커스텀 훅, `router.replace`, 유효성 검사 | [2부 문서](docs/part2-posts.md) |
 | 3부 | 011 ~ 013 | **댓글 다건조회 → 삭제 → 작성** | 훅 분리, `ReturnType`, 함수형 업데이트로 즉시 반영 | [3부 문서](docs/part3-comments.md) |
 | 정리 | 014 | README, 파트별 문서 | - | - |
+| 4부 | 015 ~ 020 | **리팩토링**(공통 틀, 파라미터 훅, 댓글 폼·항목 분리) → **댓글 수정** | 강의 35~51강: 컴포넌트/훅 분리, `postId` 명명, `modifyMode` 토글, 수정 후 목록 반영 | [4부 문서](docs/part4-refactor-comment-modify.md) |
+| 정리 | 021 | README, 4부 문서 | - | - |
 
 ## 기술 스택과 실행 방법
 
@@ -89,6 +91,13 @@ pnpm dev                 # http://localhost:3000
 | [`012`](https://github.com/tbafe26/p-14175-2/commit/012) | `feat: 댓글 삭제 기능 구현` |
 | [`013`](https://github.com/tbafe26/p-14175-2/commit/013) | `feat: 댓글 작성 기능 구현` |
 | [`014`](https://github.com/tbafe26/p-14175-2/commit/014) | `docs: README 와 파트별 학습 문서 작성` |
+| [`015`](https://github.com/tbafe26/p-14175-2/commit/015) | `refactor: 페이지 공통 틀과 뒤로 가기 링크를 컴포넌트로 추출` |
+| [`016`](https://github.com/tbafe26/p-14175-2/commit/016) | `refactor: path 파라미터 글 번호 변환을 usePostIdParam 훅으로 추출` |
+| [`017`](https://github.com/tbafe26/p-14175-2/commit/017) | `refactor: 댓글 입력 폼을 PostCommentForm 으로 분리` |
+| [`018`](https://github.com/tbafe26/p-14175-2/commit/018) | `refactor: 댓글 항목을 PostCommentListItem 파일로 분리` |
+| [`019`](https://github.com/tbafe26/p-14175-2/commit/019) | `feat: 댓글 수정 모드 토글 구현` |
+| [`020`](https://github.com/tbafe26/p-14175-2/commit/020) | `feat: 댓글 수정 API 연동과 목록 반영` |
+| [`021`](https://github.com/tbafe26/p-14175-2/commit/021) | `docs: 리팩토링과 댓글 수정 문서화` |
 
 ## 화면과 라우트
 
@@ -97,12 +106,12 @@ pnpm dev                 # http://localhost:3000
 | `/` | 홈 | 소개, 글 목록/글쓰기 이동 | 서버 컴포넌트(정적) |
 | `/posts` | 글 목록 | 글 다건조회 | 클라이언트 |
 | `/posts/write` | 글쓰기 | 글 작성 | 클라이언트 |
-| `/posts/[id]` | 글 상세 | 글 단건조회, 글 삭제, 댓글 다건조회·작성·삭제 | 클라이언트 (Partial Prerender) |
+| `/posts/[id]` | 글 상세 | 글 단건조회, 글 삭제, 댓글 다건조회·작성·수정·삭제 | 클라이언트 (Partial Prerender) |
 | `/posts/[id]/edit` | 글 수정 | 글 수정 | 클라이언트 (Partial Prerender) |
 
-| 홈 | 글 상세 + 댓글 |
-|---|---|
-| ![홈](docs/images/004.png) | ![글 상세](docs/images/013.png) |
+| 홈 | 글 상세 + 댓글 | 댓글 수정 |
+|---|---|---|
+| ![홈](docs/images/004.png) | ![글 상세](docs/images/020.png) | ![댓글 수정](docs/images/019.png) |
 
 ## 전체 구조 한눈에 보기
 
@@ -136,11 +145,17 @@ src
 │        ├─ loading.tsx        Suspense 경계 (useParams 용)
 │        ├─ page.tsx           글 상세 (훅 실행, 하위에 결과 전달)
 │        ├─ edit/page.tsx      글 수정
-│        └─ _components        PostInfo, PostCommentSection, PostCommentWrite, PostCommentList
+│        └─ _components
+│           ├─ PostInfo.tsx              글 본문, 수정/삭제 버튼
+│           ├─ PostCommentSection.tsx    댓글 영역(제목, 작성 폼, 목록)
+│           ├─ PostCommentWrite.tsx      댓글 작성(작성 API + 비우기)
+│           ├─ PostCommentForm.tsx       댓글 작성/수정 공용 입력 폼
+│           ├─ PostCommentList.tsx       댓글 목록(로딩/오류/없음 분기)
+│           └─ PostCommentListItem.tsx   댓글 한 개(modifyMode, 수정/삭제)
 ├─ components
 │  ├─ post/PostForm.tsx        글 작성/수정 공용 폼
-│  └─ ui                       buttonClass, ErrorState
-├─ hooks                       usePost, usePostComments
+│  └─ ui                       buttonClass, ErrorState, PageContainer, BackLink
+├─ hooks                       usePost, usePostComments, usePostIdParam
 ├─ lib
 │  ├─ backend/client.ts        apiFetch, ApiError, RsData
 │  ├─ format.ts                날짜 포맷
@@ -159,7 +174,11 @@ src
 | 글 삭제 | DELETE | `/api/v1/posts/{id}` | - | `RsData` (`200-1`) |
 | 댓글 다건조회 | GET | `/api/v1/posts/{postId}/comments` | - | `PostCommentDto[]` |
 | 댓글 작성 | POST | `/api/v1/posts/{postId}/comments` | `{ content }` | `RsData<PostCommentDto>` (`201-1`) |
+| 댓글 단건조회 | GET | `/api/v1/posts/{postId}/comments/{id}` | - | `PostCommentDto` |
+| 댓글 수정 | PUT | `/api/v1/posts/{postId}/comments/{id}` | `{ content }` | `RsData` (`200-1`) |
 | 댓글 삭제 | DELETE | `/api/v1/posts/{postId}/comments/{id}` | - | `RsData` (`200-1`) |
+
+- 댓글 단건조회는 수정 직후 바뀐 수정 시각을 받아 오는 데 씁니다(수정 API 응답에는 data 가 없음).
 
 - 실패 응답도 `RsData` 형태입니다. 예: 없는 글 → 404 `{"resultCode":"404-1","msg":"해당 데이터가 존재하지 않습니다."}`
 - 입력 규칙(백엔드와 동일): 제목 2~100자, 내용 2~5000자, 댓글 2~100자
@@ -177,6 +196,10 @@ src
 | 목록 상태 갱신 | `setPostComments(postComments.filter(...))` | `setPostComments(prev => ...)` | 요청 중 생긴 변경을 덮어쓰지 않음 |
 | 로딩 표시 | `로딩중...` 문구 | 스켈레톤 | 레이아웃이 덜 흔들림 |
 | 중복 요청 | 제한 없음 | 요청 중 버튼 비활성화 | 두 번 클릭으로 같은 요청이 나가는 것 방지 |
+| 댓글 작성/수정 폼 | 작성 폼과 수정 폼에 검사 코드를 각각 작성 | `PostCommentForm` 공용 컴포넌트 | 댓글 검사 규칙도 한 곳에 모임 |
+| 댓글 수정 UI | 한 버튼이 "수정"/"수정취소"로 바뀜 | 폼 안에 취소·저장, 수정 중 바깥 버튼 숨김, Esc 취소, 커서 끝 | 지금 누를 수 있는 동작이 분명함 |
+| 댓글 수정 반영 | 화면의 내용만 교체 | 단건조회로 서버 값(수정 시각 포함)으로 교체, "수정됨" 표시 | 새로고침 없이도 서버와 같은 상태 |
+| 컴포넌트 위치 | 상세 페이지 한 파일에 훅·컴포넌트 전부 | 훅은 `hooks/`, 화면은 `_components/` 파일별 | 파일 하나가 한 가지 일만 함 |
 | API 주소 | 환경변수 파일을 저장소에 커밋 | 코드 기본값 + 로컬 환경변수로 덮어쓰기 | 클론 직후 바로 실행, 환경변수 파일은 저장소에 두지 않음 |
 
 ## 핵심 개념 정리
@@ -222,6 +245,22 @@ src
 
 - 서버에서 바뀐 내용을 화면에 반영하려면 상태도 함께 바꿔야 합니다(삭제는 filter, 작성은 응답 data 를 추가).
 - `setState(prev => ...)` 는 반영 시점의 최신 값을 기준으로 하므로, 비동기 응답을 기다리는 사이 상태가 바뀌어도 안전합니다.
+- 수정은 `map` 으로 해당 항목만 바꿉니다. 수정 API 가 data 를 주지 않아 단건조회로 받은 값으로 교체합니다.
+</details>
+
+<details>
+<summary><b>리팩토링은 동작을 바꾸지 않고 구조만 바꾼다</b> — 4부</summary>
+
+- 반복되는 마크업(`PageContainer`, `BackLink`), 반복되는 변환(`usePostIdParam`), 곧 두 번 쓰일 폼(`PostCommentForm`)을 꺼냈습니다.
+- 리팩토링 커밋마다 주요 화면의 결과가 이전과 같은지 확인한 뒤 다음 단계로 넘어갔습니다.
+- 강의 45강 말처럼 컴포넌트 구조화는 필수가 아닙니다. 기능이 붙을 자리가 보일 때, 그 기능이 쉬워지는 만큼만 나눴습니다.
+</details>
+
+<details>
+<summary><b>항목 단위 상태: 수정 모드</b> — 4부</summary>
+
+- `modifyMode` 는 댓글 하나(`PostCommentListItem`) 안의 상태라, 여러 댓글이 서로 영향 없이 따로 수정 모드가 됩니다.
+- `modifyMode` 에 따라 내용과 수정 폼을 바꿔 그리고, 성공하면 모드를 닫고 실패하면 입력한 내용을 그대로 둔 채 오류를 보여 줍니다.
 </details>
 
 <details>
@@ -233,5 +272,6 @@ src
 ## 검증 결과
 
 - 모든 커밋 시점에 `tsc --noEmit`, `eslint src` 통과
-- `pnpm build` 성공 (013 시점): `/`, `/posts`, `/posts/write` 정적, `/posts/[id]`, `/posts/[id]/edit` Partial Prerender
+- `pnpm build` 성공 (013, 020 시점): `/`, `/posts`, `/posts/write` 정적, `/posts/[id]`, `/posts/[id]/edit` Partial Prerender
+- 리팩토링 커밋(015~018)마다 `/posts`, `/posts/1`, `/posts/1/edit`, `/posts/write` 의 화면 결과가 이전과 같은지 확인
 - 기능마다 실제 백엔드(`068`)를 띄운 상태에서 브라우저로 흐름을 확인하고, 결과를 커밋 메세지와 파트별 문서의 "확인" 에 기록했습니다.

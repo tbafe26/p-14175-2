@@ -1,6 +1,6 @@
 # 3부. 댓글 (011 ~ 013)
 
-[← README](../README.md) · [1부](part1-setup.md) · [2부](part2-posts.md) · **3부**
+[← README](../README.md) · [1부](part1-setup.md) · [2부](part2-posts.md) · **3부** · [4부](part4-refactor-comment-modify.md)
 
 ## 요약
 
@@ -74,4 +74,4 @@ setPostComments((prev) => prev?.filter((comment) => comment.id !== commentId) ??
 
 ---
 
-[← 2부](part2-posts.md) · **3부** · [README →](../README.md)
+[← 2부](part2-posts.md) · **3부** · [4부 →](part4-refactor-comment-modify.md)

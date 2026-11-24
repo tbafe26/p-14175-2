@@ -1,6 +1,6 @@
 # 1부. 프로젝트 세팅, 디자인, 홈 (001 ~ 005)
 
-[← README](../README.md) · **1부** · [2부](part2-posts.md) · [3부](part3-comments.md)
+[← README](../README.md) · **1부** · [2부](part2-posts.md) · [3부](part3-comments.md) · [4부](part4-refactor-comment-modify.md)
 
 ## 요약
 

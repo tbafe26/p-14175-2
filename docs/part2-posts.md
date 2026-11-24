@@ -1,6 +1,6 @@
 # 2부. 글 CRUD (006 ~ 010)
 
-[← README](../README.md) · [1부](part1-setup.md) · **2부** · [3부](part3-comments.md)
+[← README](../README.md) · [1부](part1-setup.md) · **2부** · [3부](part3-comments.md) · [4부](part4-refactor-comment-modify.md)
 
 ## 요약
 
