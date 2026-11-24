@@ -4,18 +4,17 @@ import { BackLink } from "@/components/ui/back-link";
 import { PageContainer } from "@/components/ui/page-container";
 import { usePost } from "@/hooks/usePost";
 import { usePostComments } from "@/hooks/usePostComments";
-import { useParams } from "next/navigation";
+import { usePostIdParam } from "@/hooks/usePostIdParam";
 import { PostCommentSection } from "./_components/PostCommentSection";
 import { PostInfo } from "./_components/PostInfo";
 
 export default function Page() {
-  // path 파라미터는 항상 문자열로 들어오므로 숫자로 바꿔 쓴다.
-  const { id: idStr } = useParams<{ id: string }>();
-  const id = Number(idStr);
+  // 글과 댓글이 함께 쓰는 번호라 id 보다 postId 라는 이름이 뜻을 분명히 한다.
+  const postId = usePostIdParam();
 
   // 상위 컴포넌트에서 훅을 실행하고, 결과 객체를 그대로 하위 컴포넌트에 넘긴다.
-  const postState = usePost(id);
-  const postCommentsState = usePostComments(id);
+  const postState = usePost(postId);
+  const postCommentsState = usePostComments(postId);
 
   return (
     <PageContainer>

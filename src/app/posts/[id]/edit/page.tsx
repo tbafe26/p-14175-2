@@ -5,14 +5,15 @@ import { BackLink } from "@/components/ui/back-link";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageContainer } from "@/components/ui/page-container";
 import { usePost } from "@/hooks/usePost";
+import { usePostIdParam } from "@/hooks/usePostIdParam";
 import type { PostWriteReqBody } from "@/types/post";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
-// useParams() 를 쓰지만 상위 [id]/loading.tsx 의 Suspense 경계 안에 있으므로 따로 loading.tsx 가 필요 없다.
+// usePostIdParam() 이 useParams() 를 쓰지만, 상위 [id]/loading.tsx 의 Suspense 경계 안에 있으므로
+// 따로 loading.tsx 가 필요 없다.
 export default function Page() {
   const router = useRouter();
-  const { id: idStr } = useParams<{ id: string }>();
-  const id = Number(idStr);
+  const id = usePostIdParam();
 
   const { post, error, modifyPost: _modifyPost } = usePost(id);
 
