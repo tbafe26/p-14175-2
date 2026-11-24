@@ -1,9 +1,10 @@
 "use client";
 
 import { PostForm } from "@/components/post/PostForm";
+import { BackLink } from "@/components/ui/back-link";
+import { PageContainer } from "@/components/ui/page-container";
 import { apiFetch, type RsData } from "@/lib/backend/client";
 import type { PostDto, PostWriteReqBody } from "@/types/post";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function Page() {
@@ -20,19 +21,14 @@ export default function Page() {
     });
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-5 py-12">
-      <Link
-        href="/posts"
-        className="text-[15px] font-medium text-grey-600 hover:text-grey-900"
-      >
-        ← 글 목록
-      </Link>
+    <PageContainer>
+      <BackLink href="/posts">글 목록</BackLink>
 
       <h1 className="mt-6 text-3xl font-bold tracking-tight">글쓰기</h1>
 
       <div className="mt-8">
         <PostForm submitLabel="작성하기" onSubmit={writePost} />
       </div>
-    </div>
+    </PageContainer>
   );
 }

@@ -2,6 +2,7 @@
 
 import { buttonClass } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
+import { PageContainer } from "@/components/ui/page-container";
 import { apiFetch, toErrorMessage } from "@/lib/backend/client";
 import { formatDate } from "@/lib/format";
 import type { PostDto } from "@/types/post";
@@ -20,7 +21,7 @@ export default function Page() {
   }, []);
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-5 py-12">
+    <PageContainer>
       <div className="flex items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">글 목록</h1>
@@ -36,7 +37,7 @@ export default function Page() {
       <div className="mt-8">
         <PostList posts={posts} error={error} />
       </div>
-    </div>
+    </PageContainer>
   );
 }
 

@@ -1,8 +1,9 @@
 "use client";
 
+import { BackLink } from "@/components/ui/back-link";
+import { PageContainer } from "@/components/ui/page-container";
 import { usePost } from "@/hooks/usePost";
 import { usePostComments } from "@/hooks/usePostComments";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { PostCommentSection } from "./_components/PostCommentSection";
 import { PostInfo } from "./_components/PostInfo";
@@ -17,13 +18,8 @@ export default function Page() {
   const postCommentsState = usePostComments(id);
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-5 py-12">
-      <Link
-        href="/posts"
-        className="text-[15px] font-medium text-grey-600 hover:text-grey-900"
-      >
-        ← 글 목록
-      </Link>
+    <PageContainer>
+      <BackLink href="/posts">글 목록</BackLink>
 
       <div className="mt-6">
         <PostInfo postState={postState} />
@@ -33,6 +29,6 @@ export default function Page() {
       {postState.post != null && (
         <PostCommentSection postCommentsState={postCommentsState} />
       )}
-    </div>
+    </PageContainer>
   );
 }
